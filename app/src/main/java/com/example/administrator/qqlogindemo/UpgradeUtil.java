@@ -5,9 +5,6 @@ package com.example.administrator.qqlogindemo;
  */
 public class UpgradeUtil {
 
-    static {
-        System.loadLibrary("ufoPatch");
-    }
     /**
      * 用补丁包恢复
      * @param game

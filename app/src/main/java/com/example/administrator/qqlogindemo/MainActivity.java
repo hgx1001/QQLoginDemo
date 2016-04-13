@@ -44,6 +44,8 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.administrator.qqlogindemo.UpgradeUtil.gamePatch;
+
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private Tencent mTencent;
@@ -330,9 +332,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
         String oldfileDir = sdcardPath+"/tmp/qqgame_v1.apk";
         String newfileDir = sdcardPath+"/tmp/qqgame_v2.apk";
         String patchfileDir = sdcardPath+"/tmp/qqgame_v1_v2.diff";
-        boolean suc= UpgradeUtil.restoreAPK(oldfileDir,newfileDir,patchfileDir);
+        int suc= gamePatch(oldfileDir,newfileDir,patchfileDir);
         System.out.println("[makeAPK] suc=" + suc);
-        if(suc){
+        if(suc!=0){
             //setContentView(R.layout.suc);
         }
         else{
