@@ -7,10 +7,10 @@ import android.util.Log;
 public class Config {
 	private static final String TAG = "Config";
 	
-	public static final String UPDATE_SERVER = "http://10.16.106.48:8080/qqlogindemo/";
-	public static final String UPDATE_APKNAME = "qqlogindemo2.apk";
+	public static final String UPDATE_SERVER = "http://10.16.106.48:8080/myweb/qqlogindemo/";
+	public static final String UPDATE_APKNAME = "qqlogindemo.apk";
 	public static final String UPDATE_VERJSON = "ver.json";
-	public static final String UPDATE_SAVENAME = "qqlogindemo2.apk";
+	public static final String UPDATE_SAVENAME = "qqlogindemo.apk";
 	
 	
 	public static int getVerCode(Context context) {

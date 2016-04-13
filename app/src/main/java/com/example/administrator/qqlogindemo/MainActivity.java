@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tencent.beacon.event.UserAction;
@@ -62,6 +64,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private int serverVersionCode;
     private String serverVersionName;
     private ProgressDialog progressDialog = null;
+    private int progressLength;
+    private int progressTotalLength;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +133,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                                 progressDialog = new ProgressDialog(MainActivity.this);
                                                 progressDialog.setTitle("正在下载");
                                                 progressDialog.setMessage("请稍后...");
-                                                progressDialog.setProgressStyle( ProgressDialog.STYLE_SPINNER );
+                                                progressDialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL );
+                                                progressDialog.setCancelable(false);
+                                                progressDialog.setProgress(0);
+
                                                 doVersionUpgrade();
 
                                             }
@@ -150,6 +157,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         }
                         break;
                     }
+                    case 3:
+                        progressDialog.setMax(progressTotalLength);
+                        progressDialog.setProgress(0);
+                        progressDialog.show();
+                        break;
+                    case 4:
+                        progressDialog.setProgress(progressLength);
+                        break;
+
+                    case 5:
+                        File file = new File(Environment.getExternalStorageDirectory(), Config.UPDATE_SAVENAME);
+                        if ( !file.exists() ){
+                            return;
+                        }
+//                        String cmd = "chmod 777" + Environment.getExternalStorageState() + Config.UPDATE_SAVENAME;
+//                        try {
+//                            Runtime.getRuntime().exec(cmd);
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.setDataAndType(Uri.parse("file://"+file.toString()), "application/vnd.android.package-archive");
+                        startActivity(intent);
+                        finish();
+                        break;
 
                 }
            }
@@ -160,11 +193,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         UserAction.initUserAction(this);
         InitViews();
 
+        TextView textView = (TextView) findViewById(R.id.version);
+        try {
+            textView.setText("当前版本号："+Integer.toString(this.getPackageManager().getPackageInfo(getPackageName(),0).versionCode));
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void doVersionUpgrade() {
 
-        progressDialog.show();
 
         new Thread(new Runnable() {
             @Override
@@ -177,6 +216,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     conn.setDoInput(true);
                     conn.connect();
 
+                    progressTotalLength = conn.getContentLength();
+                    mhandler.sendEmptyMessage(3);
+
                     InputStream is = conn.getInputStream();
 
                     //写SD卡
@@ -186,23 +228,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         fileOutputStream = new FileOutputStream(file);
                         byte[] buf = new byte[1024];
                         int ch = -1;
-                        int count = 0 ;
+                        progressLength = 0 ;
+
                         while ((ch = is.read(buf))!=-1){
                             fileOutputStream.write(buf,0,ch);
-                            count += ch ;
+                            progressLength += ch ;
+                            mhandler.sendEmptyMessage(4);
+
                         }
                         fileOutputStream.flush();
                         if ( fileOutputStream !=null )
                             fileOutputStream.close();
+                        is.close();
                     }
-                    // 开启安装
-                    mhandler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressDialog.cancel();
-                            //TODO
-                        }
-                    });
+                    progressDialog.cancel();
+
+                    mhandler.sendEmptyMessage(5);
+
 
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -233,6 +275,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         findViewById(R.id.reportBtn1).setOnClickListener(this);
         findViewById(R.id.reportBtn2).setOnClickListener(this);
         findViewById(R.id.checkUpdate).setOnClickListener(this);
+        findViewById(R.id.checkIncrementUpdate).setOnClickListener(this);
 
     }
 
@@ -274,6 +317,26 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.checkUpdate:
                 getServerVersionCode();
                 break;
+            case R.id.checkIncrementUpdate:
+                checkIncrementUpdate();
+                break;
+        }
+    }
+
+    private void checkIncrementUpdate() {
+
+
+        String sdcardPath = Environment.getExternalStorageDirectory().getPath();
+        String oldfileDir = sdcardPath+"/tmp/qqgame_v1.apk";
+        String newfileDir = sdcardPath+"/tmp/qqgame_v2.apk";
+        String patchfileDir = sdcardPath+"/tmp/qqgame_v1_v2.diff";
+        boolean suc= UpgradeUtil.restoreAPK(oldfileDir,newfileDir,patchfileDir);
+        System.out.println("[makeAPK] suc=" + suc);
+        if(suc){
+            //setContentView(R.layout.suc);
+        }
+        else{
+          //  setContentView(R.layout.fail);
         }
     }
 
@@ -409,7 +472,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         serverVersionCode = obj.getInt("verCode");
                         serverVersionName = obj.getString("verName");
 
-                        mhandler.sendEmptyMessageDelayed(2,0);
+                        mhandler.sendEmptyMessage(2);
                     }
 
                 }catch ( Exception e )

@@ -54,9 +54,23 @@
         android:layout_height="wrap_content"
         android:text="测试上报2"
         android:id="@+id/reportBtn2"/>
+
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="测试更新"
+        android:text="测试全量更新"
         android:id="@+id/checkUpdate"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="版本号:"
+        android:id="@+id/version"
+        android:gravity="center"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="测试增量更新"
+        android:id="@+id/checkIncrementUpdate"/>
+
 </LinearLayout>
