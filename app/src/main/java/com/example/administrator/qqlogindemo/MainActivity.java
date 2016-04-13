@@ -44,8 +44,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.administrator.qqlogindemo.UpgradeUtil.gamePatch;
-
 public class MainActivity extends Activity implements View.OnClickListener {
 
     private Tencent mTencent;
@@ -325,8 +323,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    private void checkIncrementUpdate() {
+    public static native int gamePatch(String oldfile, String newfile, String patchfile);
+    static
+    {
+        System.loadLibrary("ufoPatch");
+    }
 
+    private void checkIncrementUpdate() {
 
         String sdcardPath = Environment.getExternalStorageDirectory().getPath();
         String oldfileDir = sdcardPath+"/tmp/qqgame_v1.apk";
@@ -334,7 +337,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         String patchfileDir = sdcardPath+"/tmp/qqgame_v1_v2.diff";
         int suc= gamePatch(oldfileDir,newfileDir,patchfileDir);
         System.out.println("[makeAPK] suc=" + suc);
-        if(suc!=0){
+        if( suc != 0 ){
             //setContentView(R.layout.suc);
         }
         else{
