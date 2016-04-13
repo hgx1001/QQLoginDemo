@@ -1,9 +1,15 @@
-package com.example.administrator.qqlogindemo;
+package com.tencent.qqgame.client.scene.model;
+
+
 
 /**
- * Created by Administrator on 2016/4/13.
+ * 游戏数据模型
+ * <p>
+ *
+ * </p>
  */
-public class UpgradeUtil {
+public class GameModel{
+
 
     /**
      * 用补丁包恢复
@@ -29,5 +35,8 @@ public class UpgradeUtil {
     }
 
 
+
     public native static int gamePatch(String oldfile, String newfile, String patchfile);
+
+
 }

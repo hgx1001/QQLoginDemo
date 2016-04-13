@@ -26,6 +26,7 @@ import com.tencent.beacon.event.UserAction;
 import com.tencent.connect.UserInfo;
 import com.tencent.connect.common.Constants;
 import com.tencent.connect.share.QQShare;
+import com.tencent.qqgame.client.scene.model.GameModel;
 import com.tencent.tauth.Tencent;
 
 import org.json.JSONArray;
@@ -323,21 +324,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    public static native int gamePatch(String oldfile, String newfile, String patchfile);
-    static
-    {
-        System.loadLibrary("ufoPatch");
-    }
-
     private void checkIncrementUpdate() {
 
         String sdcardPath = Environment.getExternalStorageDirectory().getPath();
         String oldfileDir = sdcardPath+"/tmp/qqgame_v1.apk";
         String newfileDir = sdcardPath+"/tmp/qqgame_v2.apk";
         String patchfileDir = sdcardPath+"/tmp/qqgame_v1_v2.diff";
-        int suc= gamePatch(oldfileDir,newfileDir,patchfileDir);
+        boolean suc= GameModel.restoreAPK(oldfileDir,newfileDir,patchfileDir);
         System.out.println("[makeAPK] suc=" + suc);
-        if( suc != 0 ){
+        if( suc ){
             //setContentView(R.layout.suc);
         }
         else{
