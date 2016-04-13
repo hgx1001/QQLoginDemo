@@ -17,19 +17,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    sourceSets {
-        main {
-            jni.srcDirs = []
-            jniLibs.srcDirs = ['libs']
-        }
-    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
-    compile files('E:/android_proj/QQLoginDemo/libs/mta-sdk-1.6.2.jar')
-    compile files('E:/android_proj/QQLoginDemo/libs/open_sdk_r5509.jar')
     compile files('libs/beacon_android_v2.1.2.jar')
+    compile files('libs/mta-sdk-1.6.2.jar')
+    compile files('libs/open_sdk_r5509.jar')
 }
