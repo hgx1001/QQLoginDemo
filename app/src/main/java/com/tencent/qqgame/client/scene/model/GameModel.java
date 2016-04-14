@@ -10,11 +10,14 @@ package com.tencent.qqgame.client.scene.model;
  */
 public class GameModel{
 
+    static {
+        try {
+            System.loadLibrary("ufoPatch");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
 
-    /**
-     * 用补丁包恢复
-     * @param game
-     */
     public static boolean restoreAPK(String oldfileDir, String newfileDir, String patchfileDir){
         int ret = -1;
 

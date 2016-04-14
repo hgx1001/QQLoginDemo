@@ -323,13 +323,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
         }
     }
-    static {
-        try {
-            System.loadLibrary("ufoPatch");
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
+
     private void checkIncrementUpdate() {
 
         String sdcardPath = Environment.getExternalStorageDirectory().getPath();
@@ -338,12 +332,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
         String patchfileDir = sdcardPath+"/tmp/qqgame_v1_v2.diff";
         boolean suc= GameModel.restoreAPK(oldfileDir,newfileDir,patchfileDir);
         System.out.println("[makeAPK] suc=" + suc);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        String text = "源文件:"+oldfileDir +"\n" + "diff文件:" + patchfileDir +"\n新文件:"+newfileDir;
+        dialog.setMessage(text);
         if( suc ){
-            //setContentView(R.layout.suc);
+
+            dialog.setTitle("成功");
         }
         else{
-          //  setContentView(R.layout.fail);
+           dialog.setTitle("失败");
         }
+        dialog.setNegativeButton("确定",null);
+
+        dialog.show();
     }
 
     private void onReportBtn2Click() {
