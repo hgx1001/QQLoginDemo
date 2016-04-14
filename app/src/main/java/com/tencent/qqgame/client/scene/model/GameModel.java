@@ -35,6 +35,4 @@ public class GameModel{
     }
 
     public native static int gamePatch(String oldfile, String newfile, String patchfile);
-
-
 }

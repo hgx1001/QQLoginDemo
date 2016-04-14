@@ -323,7 +323,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 break;
         }
     }
-
+    static {
+        try {
+            System.loadLibrary("ufoPatch");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
     private void checkIncrementUpdate() {
 
         String sdcardPath = Environment.getExternalStorageDirectory().getPath();
