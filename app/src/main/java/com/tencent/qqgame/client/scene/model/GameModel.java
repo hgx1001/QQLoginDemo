@@ -34,8 +34,6 @@ public class GameModel{
         return ret==0;
     }
 
-
-
     public native static int gamePatch(String oldfile, String newfile, String patchfile);
 
 

@@ -1,10 +1,12 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.model.application'
+
+model{
 
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.2"
 
-    defaultConfig {
+    defaultConfig.with {
         applicationId "com.example.administrator.qqlogindemo"
         minSdkVersion 14
         targetSdkVersion 23
@@ -17,34 +19,48 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    productFlavors{
-        x86{
-            ndk{
-                abiFilter "x86"
-            }
+    android.ndk {
+        moduleName = "ufoPatch"
+        /*
+         * Other ndk flags configurable here are
+         * cppFlags.add("-fno-rtti")
+         * cppFlags.add("-fno-exceptions")
+         * ldLibs.addAll(["android", "log"])
+         * stl       = "system"
+         */
+    }
+    android.buildTypes {
+        release {
+            minifyEnabled = false
+            proguardFiles.add(file('proguard-rules.txt'))
         }
-        mips{
-            ndk{
-                abiFilter "mips"
-            }
+    }
+    android.productFlavors {
+        // for detailed abiFilter descriptions, refer to "Supported ABIs" @
+        // https://developer.android.com/ndk/guides/abis.html#sa
+        create("arm") {
+            ndk.abiFilters.add("armeabi")
         }
-        armv7{
-            ndk{
-                abiFilter "armeabi-v7a"
-            }
+        create("arm7") {
+            ndk.abiFilters.add("armeabi-v7a")
         }
-        arm{
-            ndk{
-                abiFilter "armeabi"
-            }
+        create("arm8") {
+            ndk.abiFilters.add("arm64-v8a")
         }
-        armdebug{
-            ndk{
-                abiFilter "armeabi"
-            }
+        create("x86") {
+            ndk.abiFilters.add("x86")
         }
-        fat
+        create("x86-64") {
+            ndk.abiFilters.add("x86_64")
+        }
+        create("mips") {
+            ndk.abiFilters.add("mips")
+        }
+        create("mips-64") {
+            ndk.abiFilters.add("mips64")
+        }
+        // To include all cpu architectures, leaves abiFilters empty
+        create("all")
     }
 }
 
@@ -55,4 +71,5 @@ dependencies {
     compile files('libs/beacon_android_v2.1.2.jar')
     compile files('libs/mta-sdk-1.6.2.jar')
     compile files('libs/open_sdk_r5509.jar')
+}
 }
